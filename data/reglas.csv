@@ -1,0 +1,38 @@
+antecedente,consecuente,soporte,confianza,lift,canastas
+"whole milk, yogurt",sausage,0.00147,0.1317,2.183,22
+"sausage, whole milk",yogurt,0.00147,0.1642,1.912,22
+"sausage, yogurt",whole milk,0.00147,0.2558,1.62,22
+flour,tropical fruit,0.00107,0.1096,1.617,16
+processed cheese,root vegetables,0.00107,0.1053,1.513,16
+soft cheese,yogurt,0.00127,0.1267,1.475,19
+detergent,yogurt,0.00107,0.124,1.444,16
+chewing gum,yogurt,0.0014,0.1167,1.359,21
+"rolls/buns, sausage",whole milk,0.00114,0.2125,1.346,17
+processed cheese,rolls/buns,0.00147,0.1447,1.316,22
+packaged fruit/vegetables,rolls/buns,0.0012,0.1417,1.288,18
+seasonal products,rolls/buns,0.001,0.1415,1.286,15
+herbs,yogurt,0.00114,0.1076,1.253,17
+oil,soda,0.0018,0.1211,1.247,27
+"sausage, whole milk",soda,0.00107,0.1194,1.23,16
+beverages,soda,0.00187,0.1129,1.163,28
+red/blush wine,rolls/buns,0.00134,0.1274,1.158,20
+"sausage, whole milk",rolls/buns,0.00114,0.1269,1.153,17
+"rolls/buns, soda",other vegetables,0.00114,0.1405,1.151,17
+"sausage, soda",whole milk,0.00107,0.1798,1.138,16
+frankfurter,other vegetables,0.00515,0.1363,1.116,77
+semi-finished bread,whole milk,0.00167,0.1761,1.115,25
+"other vegetables, rolls/buns",soda,0.00114,0.1076,1.108,17
+"whole milk, yogurt",rolls/buns,0.00134,0.1198,1.089,20
+"rolls/buns, yogurt",whole milk,0.00134,0.1709,1.082,20
+chocolate,rolls/buns,0.00281,0.119,1.082,42
+"other vegetables, soda",rolls/buns,0.00114,0.1172,1.066,17
+detergent,rolls/buns,0.001,0.1163,1.057,15
+pot plants,other vegetables,0.001,0.1282,1.05,15
+frozen meals,other vegetables,0.00214,0.1275,1.044,32
+ice cream,rolls/buns,0.00174,0.1145,1.041,26
+meat,other vegetables,0.00214,0.127,1.04,32
+hard cheese,rolls/buns,0.00167,0.1136,1.033,25
+detergent,whole milk,0.0014,0.1628,1.031,21
+ham,whole milk,0.00274,0.1602,1.014,41
+berries,other vegetables,0.00267,0.1227,1.005,40
+fruit/vegetable juice,rolls/buns,0.00374,0.11,1.0,56

@@ -135,24 +135,65 @@ elif pagina == "Recomendador":
         "según las reglas encontradas. Úselo en caja, en la app o para planear exhibiciones."
     )
 
+    # --- Combinaciones que sí tienen sugerencias (antecedentes de las reglas) ---
+    combos = (reglas.groupby("antecedente")
+              .agg(lift_max=("lift", "max"), sugiere=("consecuente", lambda x: ", ".join(x)))
+              .sort_values("lift_max", ascending=False).reset_index())
+    productos_con_sugerencia = set(reglas["antecedente"].str.split(", ").explode())
+
+    if "carrito" not in st.session_state:
+        st.session_state.carrito = ["whole milk", "yogurt"]
+
+    def cargar_combo(antecedente):
+        st.session_state.carrito = antecedente.split(", ")
+
+    def boton_combo(fila, col, clave):
+        etiqueta = f"{fila['antecedente'].replace(', ', ' + ')}  →  {fila['sugiere']}"
+        col.button(
+            etiqueta, key=f"{clave}_{fila.name}", width="stretch",
+            on_click=cargar_combo, args=(fila["antecedente"],),
+            help=f"Lift máximo {fila['lift_max']:.2f}",
+        )
+
+    st.subheader("1. Selección rápida")
+    st.caption("Combinaciones que generan una sugerencia. Haga clic para cargarlas en el carrito.")
+
+    grupos = [
+        ("Asociación fuerte (lift > 1,5)", combos[combos["lift_max"] > 1.5], True),
+        ("Asociación moderada (lift 1,2 – 1,5)", combos[(combos["lift_max"] >= 1.2) & (combos["lift_max"] <= 1.5)], True),
+        ("Asociación débil (lift 1,0 – 1,2)", combos[combos["lift_max"] < 1.2], False),
+    ]
+    for titulo, grupo, abierto in grupos:
+        with st.expander(f"{titulo} · {len(grupo)} combinaciones", expanded=abierto):
+            cols = st.columns(2)
+            for i, (_, fila) in enumerate(grupo.iterrows()):
+                boton_combo(fila, cols[i % 2], titulo[:6])
+
+    # --- Todos los productos (primero los que generan sugerencias) ---
+    st.subheader("2. Carrito del cliente")
+    opciones = (sorted(productos_con_sugerencia)
+                + [p for p in productos_catalogo if p not in productos_con_sugerencia])
     carrito = st.multiselect(
-        "Productos en el carrito",
-        options=productos_catalogo,
-        default=["whole milk", "yogurt"],
-        help="Solo 30 de los 167 productos participan en alguna regla.",
+        "Productos en el carrito (⭐ = participa en alguna regla)",
+        options=opciones,
+        key="carrito",
+        format_func=lambda p: f"⭐ {p}" if p in productos_con_sugerencia else p,
+        help=f"Los {len(productos_con_sugerencia)} productos con ⭐ aparecen primero. "
+             "Algunos solo generan sugerencias en pareja (por ejemplo, whole milk + yogurt).",
     )
 
+    st.subheader("3. Sugerencias")
     if not carrito:
-        st.info("Agregue al menos un producto al carrito para ver sugerencias.")
+        st.info("Agregue al menos un producto al carrito o use la selección rápida.")
     else:
         sugerencias = recomendar(carrito)
         if sugerencias.empty:
             st.warning(
-                "No hay reglas para esta combinación. Pruebe con alguno de estos productos: "
-                + ", ".join(productos_en_reglas[:12]) + "…"
+                "No hay reglas para esta combinación. Use la selección rápida o agregue "
+                "un producto marcado con ⭐."
             )
         else:
-            st.subheader(f"Sugerencias ({len(sugerencias)})")
+            st.write(f"**{len(sugerencias)}** producto(s) para ofrecer:")
             for _, r in sugerencias.iterrows():
                 with st.container(border=True):
                     a, b, c = st.columns([3, 1, 1])
@@ -160,6 +201,8 @@ elif pagina == "Recomendador":
                     a.caption(f"Porque el cliente lleva: {r['antecedente']}")
                     b.metric("Confianza", f"{r['confianza']:.1%}")
                     c.metric("Lift", f"{r['lift']:.2f}")
+                    nivel = "Fuerte" if r["lift"] > 1.5 else "Moderada" if r["lift"] >= 1.2 else "Débil"
+                    a.caption(f"Asociación {nivel.lower()}")
             st.caption(
                 "Confianza: proporción de canastas con esos productos que también incluyeron el sugerido. "
                 "Lift: cuántas veces más probable es la compra frente a lo esperado por azar."
